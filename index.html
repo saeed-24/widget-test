@@ -4,14 +4,15 @@
     <textarea id="roughNotes" rows="6" placeholder="Enter rough observation points..."></textarea>
   </div>
   
-  <button id="generateBtn">Generate Professional Report</button>
+  <div class="controls">
+    <button id="generateBtn">Generate Professional Report</button>
+    <div id="statusMsg"></div>
+  </div>
   
   <div class="output-section">
     <label for="finalReport">Generated Report:</label>
     <textarea id="finalReport" rows="8" readonly></textarea>
   </div>
-  
-  <div id="statusMsg"></div>
 </div>
 
 <style>
@@ -25,6 +26,13 @@
 
 .input-section, .output-section {
   margin-bottom: 15px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 15px 0;
 }
 
 label {
@@ -41,6 +49,7 @@ textarea {
   border-radius: 4px;
   box-sizing: border-box;
   resize: vertical;
+  font-family: inherit;
 }
 
 button {
@@ -52,6 +61,7 @@ button {
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
+  flex-shrink: 0;
 }
 
 button:hover {
@@ -64,8 +74,12 @@ button:disabled {
 }
 
 #statusMsg {
-  margin-top: 10px;
   min-height: 20px;
   font-size: 13px;
+  color: #d32f2f;
+}
+
+.success-msg {
+  color: #388e3c !important;
 }
 </style>
