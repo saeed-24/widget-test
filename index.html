@@ -1,0 +1,71 @@
+<div class="surveillance-widget">
+  <div class="input-section">
+    <label for="roughNotes">Surveillance Notes:</label>
+    <textarea id="roughNotes" rows="6" placeholder="Enter rough observation points..."></textarea>
+  </div>
+  
+  <button id="generateBtn">Generate Professional Report</button>
+  
+  <div class="output-section">
+    <label for="finalReport">Generated Report:</label>
+    <textarea id="finalReport" rows="8" readonly></textarea>
+  </div>
+  
+  <div id="statusMsg"></div>
+</div>
+
+<style>
+.surveillance-widget {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.input-section, .output-section {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+button {
+  background-color: #4a6cf7;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #3a5ce5;
+}
+
+button:disabled {
+  background-color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+#statusMsg {
+  margin-top: 10px;
+  min-height: 20px;
+  font-size: 13px;
+}
+</style>
