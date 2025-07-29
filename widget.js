@@ -1,7 +1,6 @@
-// Initialize widget
-JotForm.ready(() => {
-  // Create elements reference
-  const container = document.querySelector('.surveillance-widget');
+JotForm.ready(function() {
+  // Get elements within the widget container
+  const container = this;
   const roughNotes = container.querySelector('#roughNotes');
   const finalReport = container.querySelector('#finalReport');
   const generateBtn = container.querySelector('#generateBtn');
@@ -32,7 +31,7 @@ JotForm.ready(() => {
   roughNotes.addEventListener('input', saveData);
 
   // Generate report button handler
-  generateBtn.addEventListener('click', async () => {
+  generateBtn.addEventListener('click', function() {
     const notes = roughNotes.value.trim();
     
     if (!notes) {
@@ -40,17 +39,22 @@ JotForm.ready(() => {
       return;
     }
     
-    try {
-      toggleLoading(true);
-      const report = await generateReport(notes);
-      finalReport.value = report;
-      saveData();
-      showStatus('Report generated successfully!', 'success');
-    } catch (error) {
-      showStatus(`Error: ${error.message}`, 'error');
-    } finally {
-      toggleLoading(false);
-    }
+    toggleLoading(true);
+    showStatus('Generating report...', 'info');
+    
+    generateReport(notes)
+      .then(report => {
+        finalReport.value = report;
+        saveData();
+        showStatus('Report generated successfully!', 'success');
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showStatus(`Error: ${error.message}`, 'error');
+      })
+      .finally(() => {
+        toggleLoading(false);
+      });
   });
 
   // Generate report with OpenAI
@@ -61,6 +65,7 @@ JotForm.ready(() => {
       throw new Error('Missing OpenAI API Key. Please configure widget parameters.');
     }
 
+    // Use the correct API endpoint for free ChatGPT
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -68,15 +73,15 @@ JotForm.ready(() => {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo",  // Use correct model name
         messages: [
           {
             role: "system",
-            content: "You are a professional surveillance analyst. Transform the following rough field notes into a formal surveillance report. Maintain all critical details while improving professionalism, clarity, and structure. Use formal business language. Format the report with clear sections."
+            content: "You are a professional surveillance analyst. Create a formal surveillance report based on these rough notes. Maintain all critical details while improving professionalism, clarity, and structure. Use formal business language. Format with clear sections including: Introduction, Observations, Analysis, and Conclusion."
           },
           {
             role: "user",
-            content: `Surveillance Notes:\n${notes}`
+            content: `Rough Surveillance Notes:\n${notes}`
           }
         ],
         temperature: 0.3,
@@ -84,23 +89,30 @@ JotForm.ready(() => {
       })
     });
 
-    const data = await response.json();
-    
     if (!response.ok) {
-      throw new Error(data.error?.message || 'Failed to generate report');
+      const errorData = await response.json();
+      throw new Error(errorData.error?.message || 'API request failed');
     }
 
+    const data = await response.json();
     return data.choices[0].message.content.trim();
   }
 
   // UI Helpers
   function toggleLoading(isLoading) {
     generateBtn.disabled = isLoading;
-    generateBtn.textContent = isLoading ? 'Generating Report...' : 'Generate Professional Report';
+    generateBtn.textContent = isLoading ? 'Generating...' : 'Generate Professional Report';
   }
 
   function showStatus(message, type) {
     statusMsg.textContent = message;
     statusMsg.className = type === 'success' ? 'success-msg' : '';
+    if (type === 'success') {
+      statusMsg.style.color = '#388e3c';
+    } else if (type === 'error') {
+      statusMsg.style.color = '#d32f2f';
+    } else {
+      statusMsg.style.color = '#1976d2';
+    }
   }
 });
